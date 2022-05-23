@@ -2,12 +2,12 @@
 - [Dataset](#dataset)
 - [Sources](#sources)
 - [Requirements](#requirements)
-- [Dataset Format](#Dataset/Format)
+- [Dataset Format](#dataset-format)
 - [Dependancies](#dependancies)
 - [Chart A](#chart_a)
 - [Chart B](#chart_b)
-- [Table Headers](#table/headers)
-- [Post-Processing Reports](#post-processing/reports)
+- [Table Headers](#table-headers)
+- [Post-Processing Reports](#post-processing-reports)
 
 ## Dataset
 The dataset will consist of a locally generated (pre-processed) JSON file aggregated by the following:
