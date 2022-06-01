@@ -5,7 +5,9 @@
 # v0.1 - 30 MAY 2022
 
 import pandas as pd
-import matplotlib
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+import numpy as np
 
 bats = ["OF", "1B", "3B", "2B", "SS", "DH", "C"]
 arms = ["SP", "RP"]
