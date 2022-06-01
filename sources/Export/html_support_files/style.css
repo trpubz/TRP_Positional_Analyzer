@@ -1,0 +1,48 @@
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #DDDDDD;
+}
+
+.report {
+    width: 1080px;
+}
+
+.logo {
+    float:left;
+    padding-top:10px;
+}
+
+.header {
+    background-color:#EEEEEE;
+    font-size:smaller;
+    border-width: 0px;
+    border-bottom-width: 2px;
+    border-style: solid;
+    min-height: 120px;
+    text-align: center;
+    padding: 5px;
+    margin-top:10px;
+    margin-bottom:0px;
+    margin-left:50px;
+}
+.content{
+    background-color: white;
+    margin-top:0px;
+    margin-bottom:0px;
+    margin-left:50px;
+    padding: 10px;
+}
+
+.part_anchor{
+    display:block;
+    width: 0px;
+    height: 0px;
+    float: left;
+    visibility: hidden;
+}
+
+figure {
+    text-align: center;
+    margin-bottom: 20px;
+}
