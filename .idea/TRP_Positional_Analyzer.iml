@@ -6,7 +6,7 @@
       <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/bin" />
     </content>
-    <orderEntry type="jdk" jdkName="Python 3.10 (FBB_Positional_Analyzer)" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="Python 3.10 (TRP_Positional_Analyzer)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
   <component name="PyDocumentationSettings">
