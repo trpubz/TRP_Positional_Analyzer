@@ -94,7 +94,6 @@ def TRPScatterPlotBuilder(pos: str, data: pd.DataFrame):
     plt.axhline(data[yCat].mean(), c='black', ls='-')
     plt.grid()
     plt.figure(figsize=(18, 12))
-
     plt.show()
 
 
