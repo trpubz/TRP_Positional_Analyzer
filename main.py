@@ -9,25 +9,19 @@
 # by pubins.taylor
 # v0.5 - 1 JUN 2022
 
+from sources.Model.TRPLeagueManager import TRPLeagueManager as LeagueManager
+import sources.Export.report_util as report_util
+from sources.Export.report_generator_example import generate_report
+
+
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
-from statistics import mean
 
 # instantiate the global objects
-bats = ["OF", "1B", "3B", "2B", "SS", "DH", "C"]  # these strings represent the offensive positions
-arms = ["SP", "RP"]  # these strings represent the pitching positions
-hitters = pd.read_json("resources/TRPHitterCards.json"). \
-    drop(["idESPN", "idFangraphs", "idSavant"], axis=1)  # drop referential ID keys
-# reorder columns for readability
-hitters = hitters.reindex(columns=["_name", "tm", "pos", "fantasyTeam",
-                                   "wRAA", "wOBA", "xwOBA",
-                                   "AB", "PA", "R", "HR", "RBI", "SBN", "OBP", "SLG", "xSLG"])
-pitchers = pd.read_json("resources/TRPPitcherCards.json"). \
-    drop(["idESPN", "idFangraphs", "idSavant"], axis=1)
-pitchers = pitchers.reindex(columns=["_name", "tm", "pos", "fantasyTeam",
-                                     "xERA", "FIP", "wFIP", \
-                                     "IP", "QS", "SVHD", "K/9", "ERA", "WHIP"])
+lm = LeagueManager()
+hitters = lm.hitters
+pitchers = lm.pitchers
 
 
 def TRPFilterPosGroup(pos: str) -> (str, pd.DataFrame):
@@ -95,13 +89,22 @@ def TRPScatterPlotBuilder(pos: str, data: pd.DataFrame):
     plt.grid()
     plt.figure(figsize=(18, 12))
     plt.show()
+    plt.savefig(f"sources/TRPReport/{pos}.png", dpi=150)
 
 
 if __name__ == '__main__':
-    for player in bats:
+    hitterData: (str, pd.DataFrame) = []
+    for player in lm.bats:
+        posGroup, dfPos = TRPFilterPosGroup(pos=player)
+        TRPScatterPlotBuilder(pos=posGroup, data=dfPos)
+        if posGroup == "OF":
+            hitterData.append(posGroup, dfPos)
+
+    for player in lm.arms:
         posGroup, dfPos = TRPFilterPosGroup(pos=player)
         TRPScatterPlotBuilder(pos=posGroup, data=dfPos)
 
-    for player in arms:
-        posGroup, dfPos = TRPFilterPosGroup(pos=player)
-        TRPScatterPlotBuilder(pos=posGroup, data=dfPos)
+    report = generate_report(pos=hitterData[0], dataset=hitterData[1])
+
+    html_generator = report_util.HTMLReportContext("")
+    html_generator.generate(report, "sources/TRPReport/TRP_Positional_Report")

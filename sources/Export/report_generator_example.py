@@ -1,17 +1,17 @@
-import report_util
+import pandas as pd
+
+import sources.Export.report_util as report_util
 import numpy as np
 
 
-def generate_report(dataset):
-    report = report_util.Report("Random Number Dataset Report")
+def generate_report(pos: str, dataset: pd.DataFrame) -> report_util.Report:
+    report = report_util.Report("TRP Positional Analyzer")
 
-    section = report.add_section("Dataset Stats")
+    section = report.add_section(f"Position Group: {pos}")
 
     paragraph = section.add_paragraph()
-    mean = sum(dataset) / len(dataset)
-    standard_deviation = dataset.std()
 
-    paragraph.append(f"The dataset has {len(dataset)} numbers. ")
+    paragraph.append(f"This player group has {len(dataset)} numbers. ")
     paragraph.append(f"The largest number in the dataset is {max(dataset)}. ")
     paragraph.append(f"The smallest number in the dataset is {min(dataset)}. ")
     paragraph.append(f"The dataset average value is {mean} with a standard deviation of {standard_deviation}. ")
