@@ -2,6 +2,7 @@ import pandas as pd
 
 import sources.Export.report_util as report_util
 import numpy as np
+import matplotlib.pyplot as plt
 
 
 def generate_report(pos: str, dataset: pd.DataFrame) -> report_util.Report:
@@ -11,25 +12,16 @@ def generate_report(pos: str, dataset: pd.DataFrame) -> report_util.Report:
 
     paragraph = section.add_paragraph()
 
-    paragraph.append(f"This player group has {len(dataset)} numbers. ")
-    paragraph.append(f"The largest number in the dataset is {max(dataset)}. ")
-    paragraph.append(f"The smallest number in the dataset is {min(dataset)}. ")
-    paragraph.append(f"The dataset average value is {mean} with a standard deviation of {standard_deviation}. ")
+    paragraph.append(f"The {pos} player group has {len(dataset)} players. ")
+    paragraph.append(f"The dataset is sorted on wRAA - weightedRunsAboveAverage. ")
 
     paragraph_2 = section.add_paragraph()
     ##########################################################################
     # The following code demonstrates creating a figure directly with the matplotlib API
     ##########################################################################
-    figure_1 = section.add_figure()
-    figure_1.caption = "Dataset Histogram"
-    # notice in the next line we access matplotlib's figure object directly
-    ax = figure_1.matplotlib_figure.add_subplot(1, 1, 1)
-    ax.hist(dataset)
-    ax.set_xlabel("Number Values")
-    ax.set_ylabel("Count")
-    figure_1.matplotlib_figure.tight_layout()
+    figure1 = section.add_figure()
 
-    paragraph_2.append_cross_reference(figure_1)
+    paragraph_2.append_cross_reference(figure1)
     paragraph_2.append(f" shows the histogram distribution of the numbers in the dataset. ")
     ##########################################################################
 
@@ -39,11 +31,11 @@ def generate_report(pos: str, dataset: pd.DataFrame) -> report_util.Report:
     tbl_1 = section.add_table()
     tbl_1.caption = "Dataset Listing"
 
-    tbl_1.set_header(["Value", "Less Than 0.3", "Has digit '3'"])
-    tbl_1.set_data(zip(dataset, [x < 0.3 for x in dataset], [str(x).find('3') > -1 for x in dataset]))
+    tbl_1.set_header(list(dataset.columns.values))
+    tbl_1.set_data(dataset.values.tolist())
 
-    paragraph_2.append_cross_reference(tbl_1)
-    paragraph_2.append(f" shows the numbers in the dataset with some other properties of these numbers. ")
+    paragraph_2.append_cross_reference(report_part=plot_builder(pos, dataset))
+    paragraph_2.append(f" TRP - Truncated Runs Produced projection dataset. ")
 
     ##########################################################################
     # The following code demonstrates creating another section to the report
@@ -81,13 +73,52 @@ def generate_report(pos: str, dataset: pd.DataFrame) -> report_util.Report:
     paragraph_3.append_cross_reference(figure_2)
     paragraph_3.append(" shows a plot of more random numbers.")
     n_mean = sum(nse1) / len(nse1)
-    if n_mean > mean:
+    if n_mean > 1:
         paragraph_3.append("This dataset has a larger mean compared to the baseline dataset. ")
     else:
         paragraph_3.append("This dataset has a smaller mean compared to the baseline dataset. ")
     paragraph_3.append(f"The mean is {n_mean}. ")
 
     return report
+
+
+def plot_builder(pos: str, data: pd.DataFrame, ruFig: report_util.Figure) -> plt.Figure:
+    xCat: str
+    yCat: str
+    sCat: str  # size category
+    if pos.__contains__("P"):
+        xCat = "WHIP"
+        yCat = "ERA"
+        sCat = "xERA"
+    else:
+        xCat = "OBP"
+        yCat = "SLG"
+        sCat = "wRAA"
+
+    # extract the data
+    x = data[xCat].to_numpy()
+    y = data[yCat].to_numpy()
+    # size and color based on wRAA:
+    sizes = data[sCat].apply(lambda r: r * 10)
+    colors = data[sCat].apply(lambda r: r * 10)
+
+    # plot
+    fig, ax = plt.subplots()
+
+    ax.scatter(x, y, s=sizes, c=colors, vmin=0, vmax=100, alpha=0.5)
+    # We only want to place the scatter plot labels only for those players that are Free Agents
+    for name in data["_name"]:
+        if data.fantasyTeam[data["_name"] == name].values[0] == "FA":  # 1st index value holds the string rep
+            plt.text(x=data[xCat][data["_name"] == name], y=data[yCat][data["_name"] == name], s=name)
+    ax.set_xlabel(xCat)
+    ax.set_ylabel(yCat)
+    ax.set_title(f'POS: {pos}')
+    vline = data[xCat].mean()
+    plt.axvline(vline, c='black', ls='-')
+    plt.axhline(data[yCat].mean(), c='black', ls='-')
+    plt.grid()
+    return fig
+    plt.show()
 
 
 if __name__ == "__main__":

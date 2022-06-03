@@ -9,14 +9,12 @@
 # by pubins.taylor
 # v0.5 - 1 JUN 2022
 
-from sources.Model.TRPLeagueManager import TRPLeagueManager as LeagueManager
+import matplotlib.pyplot as plt
+import pandas as pd
+
 import sources.Export.report_util as report_util
 from sources.Export.report_generator_example import generate_report
-
-
-import pandas as pd
-import matplotlib.pyplot as plt
-import numpy as np
+from sources.Model.TRPLeagueManager import TRPLeagueManager as LeagueManager
 
 # instantiate the global objects
 lm = LeagueManager()
@@ -48,8 +46,8 @@ def TRPFilterPosGroup(pos: str) -> (str, pd.DataFrame):
         else:
             topPlayers = posPlayers.head(20)
 
-    print(f"POS: {pos}")
-    print(topPlayers.to_string())
+    # print(f"POS: {pos}")
+    topPlayers.to_string(f"md/{pos}.txt")
     return pos, topPlayers
 
 
@@ -84,21 +82,21 @@ def TRPScatterPlotBuilder(pos: str, data: pd.DataFrame):
     ax.set_xlabel(xCat)
     ax.set_ylabel(yCat)
     ax.set_title(f'POS: {pos}')
-    plt.axvline(data[xCat].mean(), c='black', ls='-')
+    vline  = data[xCat].mean()
+    plt.axvline(vline, c='black', ls='-')
     plt.axhline(data[yCat].mean(), c='black', ls='-')
     plt.grid()
-    plt.figure(figsize=(18, 12))
+    plt.savefig(f"sources/Export/TRPReport/{pos}.png")
     plt.show()
-    plt.savefig(f"sources/TRPReport/{pos}.png", dpi=150)
 
 
 if __name__ == '__main__':
-    hitterData: (str, pd.DataFrame) = []
+    hitterData: (str, pd.DataFrame) = tuple()
     for player in lm.bats:
         posGroup, dfPos = TRPFilterPosGroup(pos=player)
         TRPScatterPlotBuilder(pos=posGroup, data=dfPos)
         if posGroup == "OF":
-            hitterData.append(posGroup, dfPos)
+            hitterData = (posGroup, dfPos)
 
     for player in lm.arms:
         posGroup, dfPos = TRPFilterPosGroup(pos=player)
@@ -106,5 +104,5 @@ if __name__ == '__main__':
 
     report = generate_report(pos=hitterData[0], dataset=hitterData[1])
 
-    html_generator = report_util.HTMLReportContext("")
-    html_generator.generate(report, "sources/TRPReport/TRP_Positional_Report")
+    html_generator = report_util.HTMLReportContext("sources/Export/TRPReport/")
+    html_generator.generate(report, "TRP_Positional_Report")
