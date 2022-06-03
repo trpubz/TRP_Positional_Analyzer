@@ -13,16 +13,26 @@ def generate_report(pos: str, dataset: pd.DataFrame) -> report_util.Report:
     paragraph = section.add_paragraph()
 
     paragraph.append(f"The {pos} player group has {len(dataset)} players. ")
-    paragraph.append(f"The dataset is sorted on wRAA - weightedRunsAboveAverage. ")
-
+    paragraph.append(f"The dataset holds valuable player data to include wRAA and xwOBA. ")
+    paragraph.append(f"Weighted Runs Above Average (wRAA) measures the number of offensive runs a player contributes "
+                     f"to their team compared to the average player. ")
+    paragraph.append(f"Expected Weighted On-base Average (xwOBA) is formulated using exit velocity, launch angle and, "
+                     f"on certain types of batted balls, Sprint Speed. The formation of said player's xwOBA isolates "
+                     f"the quality of contact, instead of focusing on the real outcomes which carry too much noise. ")
     paragraph_2 = section.add_paragraph()
     ##########################################################################
     # The following code demonstrates creating a figure directly with the matplotlib API
     ##########################################################################
     figure1 = section.add_figure()
 
+    plot_builder(pos=pos, data=dataset, ruFig=figure1)
+    figure1.matplotlib_figure.tight_layout()
+
     paragraph_2.append_cross_reference(figure1)
-    paragraph_2.append(f" shows the histogram distribution of the numbers in the dataset. ")
+    paragraph_2.append("Figure shows a scatter plot with On-Base Percentage on the x-axis and Slugging Percentage on "
+                       "the y-axis. The volume of the shape is directly correlated to the player's wRAA. The names "
+                       "only appear next to the plot point for those players that are "
+                       "Free Agents in my Fantasy League. ")
     ##########################################################################
 
     ##########################################################################
@@ -32,15 +42,14 @@ def generate_report(pos: str, dataset: pd.DataFrame) -> report_util.Report:
     tbl_1.caption = "Dataset Listing"
 
     tbl_1.set_header(list(dataset.columns.values))
-    tbl_1.set_data(dataset.values.tolist())
+    tbl_1.set_data(dataset.values)
 
-    paragraph_2.append_cross_reference(report_part=plot_builder(pos, dataset))
-    paragraph_2.append(f" TRP - Truncated Runs Produced projection dataset. ")
+    paragraph_2.append(f"\n TRP - Truncated Runs Produced projection dataset. ")
 
     ##########################################################################
     # The following code demonstrates creating another section to the report
     ##########################################################################
-    section_2 = report.add_section("More Random Data")
+    section_2 = report.add_section("Positional Heat Map")
     paragraph_3 = section_2.add_paragraph()
 
     ##########################################################################
@@ -48,41 +57,39 @@ def generate_report(pos: str, dataset: pd.DataFrame) -> report_util.Report:
     ##########################################################################
     figure_2 = section_2.add_figure()
 
-    # Generate some more example data for figure
-    dt = 0.01
-    t = np.arange(0, 30, dt)
-    nse1 = np.random.randn(len(t))  # white noise 1
-    nse2 = np.random.randn(len(t))  # white noise 2
-    s1 = np.sin(2 * np.pi * 10 * t) + nse1
-    s2 = np.sin(2 * np.pi * 10 * t) + nse2
+    stats = ["wOBA", "xwOBA", "Performance"]  # x-axis labels
+    trimmedData = dataset.loc[:, ("wOBA", "xwOBA")]  # get the 2 columns I want
+    trimmedData["Performance"] = dataset.xwOBA - dataset.wOBA  # add computed column
+    npData = trimmedData.to_numpy()  # convert to numpy
 
     # The following starts the plot creation using data generated above
     # notice in the next line we access matplotlib's figure object directly
-    axs = [figure_2.matplotlib_figure.add_subplot(2, 1, 1), figure_2.matplotlib_figure.add_subplot(2, 1, 2)]
-    axs[0].plot(t, s1, t, s2)
-    axs[0].set_xlim(0, 2)
-    axs[0].set_xlabel('time')
-    axs[0].set_ylabel('s1 and s2')
-    axs[0].grid(True)
+    ax = figure_2.matplotlib_figure.add_subplot()
+    ax.imshow(npData)  # heatmap
+    # Show all ticks and label them with the respective list entries
+    ax.set_xticks(np.arange(len(stats)), labels=stats)
+    ax.set_yticks(np.arange(len(dataset["_name"])), labels=dataset["_name"].to_numpy())
 
-    cxy, f = axs[1].cohere(s1, s2, 256, 1. / dt)
-    axs[1].set_ylabel('coherence')
+    plt.setp(ax.get_xticklabels(), rotation=45, ha="right",
+             rotation_mode="anchor")
+    # Loop over data dimensions and create text annotations.
+    for i in range(len(dataset["_name"].to_numpy())):
+        for j in range(len(stats)):
+            text = ax.text(j, i, npData[i, j],
+                           ha="center", va="center", color="w")
+
+    ax.set_title("Player Performance Deltas")
     figure_2.matplotlib_figure.tight_layout()
+
     ##########################################################################
 
     paragraph_3.append_cross_reference(figure_2)
-    paragraph_3.append(" shows a plot of more random numbers.")
-    n_mean = sum(nse1) / len(nse1)
-    if n_mean > 1:
-        paragraph_3.append("This dataset has a larger mean compared to the baseline dataset. ")
-    else:
-        paragraph_3.append("This dataset has a smaller mean compared to the baseline dataset. ")
-    paragraph_3.append(f"The mean is {n_mean}. ")
+    paragraph_3.append(" shows a heatmap of player performance.")
 
     return report
 
 
-def plot_builder(pos: str, data: pd.DataFrame, ruFig: report_util.Figure) -> plt.Figure:
+def plot_builder(pos: str, data: pd.DataFrame, ruFig: report_util.Figure):
     xCat: str
     yCat: str
     sCat: str  # size category
@@ -103,9 +110,11 @@ def plot_builder(pos: str, data: pd.DataFrame, ruFig: report_util.Figure) -> plt
     colors = data[sCat].apply(lambda r: r * 10)
 
     # plot
-    fig, ax = plt.subplots()
+    plt.style.use('fivethirtyeight')
+    ax = ruFig.matplotlib_figure.add_subplot()
 
     ax.scatter(x, y, s=sizes, c=colors, vmin=0, vmax=100, alpha=0.5)
+
     # We only want to place the scatter plot labels only for those players that are Free Agents
     for name in data["_name"]:
         if data.fantasyTeam[data["_name"] == name].values[0] == "FA":  # 1st index value holds the string rep
@@ -117,7 +126,6 @@ def plot_builder(pos: str, data: pd.DataFrame, ruFig: report_util.Figure) -> plt
     plt.axvline(vline, c='black', ls='-')
     plt.axhline(data[yCat].mean(), c='black', ls='-')
     plt.grid()
-    return fig
     plt.show()
 
 

@@ -1,0 +1,21 @@
+                    _name   AB                    fantasyTeam  HR    OBP   PA    pos   R  RBI  SBN    SLG   tm   wOBA       wRAA   xSLG  xwOBA
+1   Vladimir Guerrero Jr.  405        Wolfey's Miracle Makers  28  0.379  469     1B  71   79    1  0.555  TOR  0.400  32.497174  0.548  0.393
+7         Freddie Freeman  410               Hispanic  Legend  19  0.380  481     1B  73   63    3  0.487  LAD  0.375  23.259577  0.619  0.427
+12             Matt Olson  392                   Acuna Matata  25  0.356  461     1B  67   68    1  0.500  ATL  0.371  20.748378  0.450  0.360
+13            Pete Alonso  392            October's  Very Own  27  0.348  452     1B  64   75    0  0.518  NYM  0.372  20.721792  0.606  0.404
+14       Paul Goldschmidt  417           Toner from Minnesota  21  0.357  476     1B  66   65    3  0.484  STL  0.368  20.227758  0.548  0.378
+18              Ty France  413                   Acuna Matata  16  0.357  469  1B/2B  62   58    1  0.460  SEA  0.359  16.395855  0.518  0.393
+23              C.J. Cron  369        Wolfey's Miracle Makers  21  0.338  415     1B  55   64    1  0.493  COL  0.360  14.855558  0.535  0.364
+34          Anthony Rizzo  370               Money Like Beane  19  0.347  433     1B  58   59    3  0.451  NYY  0.350  11.874189  0.512  0.363
+37             Yandy Diaz  354  Keith Hernandez Magic Loogies  10  0.372  418  1B/3B  52   43    1  0.411   TB  0.350  11.462843  0.394  0.352
+38              Josh Bell  382                Pablo Sanchez's  17  0.345  440     1B  54   59    1  0.447  WSH  0.347  10.960854  0.442  0.357
+45              Max Muncy  275     Puckett, We'll  Do it Live  15  0.359  335  1B/2B  45   44    1  0.440  LAD  0.353  10.028260  0.392  0.338
+47           Rhys Hoskins  369  Keith Hernandez Magic Loogies  20  0.332  436     1B  58   56    1  0.448  PHI  0.344   9.765962  0.453  0.329
+49             Jose Abreu  417     Puckett, We'll  Do it Live  19  0.328  469     1B  57   65    1  0.451  CWS  0.342   9.719699  0.517  0.380
+58            Jared Walsh  365                Bucco Bandwagon  20  0.321  409     1B  51   59    1  0.466  LAA  0.341   8.133766  0.490  0.335
+69         Nathaniel Lowe  345                             FA  13  0.344  398     1B  46   46    2  0.419  TEX  0.338   6.915219  0.397  0.312
+71           Rowdy Tellez  348                             FA  19  0.317  390     1B  48   55    1  0.464  MIL  0.338   6.776219  0.639  0.401
+76          Andrew Vaughn  321                Pablo Sanchez's  15  0.325  362  1B/OF  44   46    0  0.444  CWS  0.338   6.289722  0.481  0.341
+80             Juan Yepez  255                             FA  13  0.323  287     1B  36   40    1  0.460  STL  0.342   5.947875  0.427  0.309
+83       Christian Walker  366  Keith Hernandez Magic Loogies  17  0.321  412     1B  49   57    1  0.440  ARI  0.334   5.778522  0.602  0.400
+85          Jesus Aguilar  382                             FA  17  0.326  431     1B  52   54    1  0.430  MIA  0.333   5.684111  0.399  0.307

@@ -7,7 +7,7 @@
 # designated with the 'TRP' namespace prefix.
 # main.py
 # by pubins.taylor
-# v0.5 - 1 JUN 2022
+# v1.0 - 2 JUN 2022
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -25,6 +25,7 @@ pitchers = lm.pitchers
 def TRPFilterPosGroup(pos: str) -> (str, pd.DataFrame):
     """
     Function that filters the Position Group
+
     :parameter pos: a string representation of the roster slot
     :returns: tuple with the pos: str and the posGroup DataFrame
     """
@@ -47,11 +48,19 @@ def TRPFilterPosGroup(pos: str) -> (str, pd.DataFrame):
             topPlayers = posPlayers.head(20)
 
     # print(f"POS: {pos}")
-    topPlayers.to_string(f"md/{pos}.txt")
+    topPlayers.to_string(f"sources/Export/txt/{pos}.txt")
     return pos, topPlayers
 
 
 def TRPScatterPlotBuilder(pos: str, data: pd.DataFrame):
+    """
+    Builds the scatter plot for all position groups passed.  x-axis is of 1 stat type and y-axis of another.  This func
+    also saves the plot to sources/Export/TRPReport
+
+    :param pos: string representation of the POS group
+    :param data: pd.DataFrame for the POS group
+    :return: none
+    """
     xCat: str
     yCat: str
     sCat: str  # size category
@@ -72,6 +81,7 @@ def TRPScatterPlotBuilder(pos: str, data: pd.DataFrame):
     colors = data[sCat].apply(lambda r: r * 10)
 
     # plot
+    plt.style.use('fivethirtyeight')
     fig, ax = plt.subplots()
 
     ax.scatter(x, y, s=sizes, c=colors, vmin=0, vmax=100, alpha=0.5)
@@ -82,20 +92,19 @@ def TRPScatterPlotBuilder(pos: str, data: pd.DataFrame):
     ax.set_xlabel(xCat)
     ax.set_ylabel(yCat)
     ax.set_title(f'POS: {pos}')
-    vline  = data[xCat].mean()
-    plt.axvline(vline, c='black', ls='-')
+    plt.axvline(data[xCat].mean(), c='black', ls='-')
     plt.axhline(data[yCat].mean(), c='black', ls='-')
-    plt.grid()
+    plt.tight_layout()
     plt.savefig(f"sources/Export/TRPReport/{pos}.png")
     plt.show()
 
 
 if __name__ == '__main__':
-    hitterData: (str, pd.DataFrame) = tuple()
+    hitterData: (str, pd.DataFrame) = tuple()  # the only DataFrame that will be passed to the report generator
     for player in lm.bats:
         posGroup, dfPos = TRPFilterPosGroup(pos=player)
         TRPScatterPlotBuilder(pos=posGroup, data=dfPos)
-        if posGroup == "OF":
+        if posGroup == "1B":  # chooses the POS group to create a report from
             hitterData = (posGroup, dfPos)
 
     for player in lm.arms:
